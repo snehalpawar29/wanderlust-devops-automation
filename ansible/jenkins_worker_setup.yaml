@@ -1,0 +1,143 @@
+---
+- name: Install Required Tools on Jenkins Worker
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks: 
+#----------Update Cache-----------
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+#----------Prerequisites Installation-----------  
+    - name: Install System Prerequisites
+      apt:
+        name:
+         - ca-certificates
+         - curl
+         - gnupg
+         - openjdk-21-jre
+         - fontconfig
+        state: present
+#----------Docker-----------
+    - name: Create Docker Keyring directory
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Download Docker GPG key
+      get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: "0644"
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: >-
+          deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc]
+          https://download.docker.com/linux/ubuntu
+          {{ ansible_distribution_release }}
+          stable
+        state: present
+        filename: docker
+
+
+    - name: Update apt cache after adding Docker repository
+      apt:
+        update_cache: yes
+    
+    - name: Install Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          -  containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+
+    - name: Ensure Docker is running & enabled
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add Ubuntu User to Docker group
+      ansible.builtin.user:
+        name: ubuntu
+        groups: docker
+        append: yes
+#----------AWS CLI-----------
+    - name: Install AWS CLI Prerequisites
+      ansible.builtin.apt:
+        name:
+          - curl
+          - unzip
+        state: present
+        update_cache: yes
+
+    - name: Download AWS CLI V2
+      ansible.builtin.get_url:
+        url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+        dest: /tmp/awscliv2.zip
+        mode: "0644"   
+
+    - name: Extract
+      ansible.builtin.unarchive:
+        src: /tmp/awscliv2.zip
+        dest: /tmp
+        remote_src: yes
+
+    - name: Install AWS CLI V2
+      ansible.builtin.command:
+        cmd: /tmp/aws/install
+        creates: /usr/local/bin/aws
+
+    - name: Verify AWS CLI V2 Installation
+      ansible.builtin.command:
+        cmd: aws --version
+      register: aws_cli_version
+      changed_when: false
+
+    - name: Display AWS CLI Version
+      ansible.builtin.debug:
+        msg: "{{ aws_cli_version.stdout }}" 
+#----------Trivy-----------
+    - name: Install Trivy
+      ansible.builtin.apt:
+        name:
+          - wget
+          - gnupg
+        state: present
+    
+    - name: Download Trivy Repo Key
+      ansible.builtin.get_url:
+        url: https://aquasecurity.github.io/trivy-repo/deb/public.key
+        dest: /tmp/trivy-public.key
+        mode: "0644"
+
+    - name: Convert trivy repo key to GPG keyring
+      ansible.builtin.shell:
+        cmd: >
+          gpg --dearmor
+          < /tmp/trivy-public.key
+          > /usr/share/keyrings/trivy.gpg
+      args:
+        creates: /usr/share/keyrings/trivy.gpg
+    
+    - name: Add Trivy Repo
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main"
+        filename: trivy
+        state: present
+
+    - name: Update apt cache after adding trivy repo
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install Trivy
+      ansible.builtin.apt:
+        name: trivy
+        state: present
