@@ -2,30 +2,16 @@ version: "3.8"
 services:
   mongodb:
     container_name: mongo-service
-    image: mongo:latest
+    image: mongo:7.0
+    command: ["--bind_ip_all"]
     volumes:
-      - ./backend/data:/data
+      - mongo_data:/data/db
     ports:
       - "27017:27017"
+    networks:
+      - wanderlust
 
-  backend:
-    container_name: backend
-    build: ./backend
-    env_file:
-      - ./backend/.env.docker
-    ports:
-      - "31100:8080"
-    depends_on:
-      - mongodb
-
-  frontend:
-    container_name: frontend
-    build: ./frontend
-    env_file:
-      - ./frontend/.env.docker
-    ports:
-      - "5173:5173"
-
+  
   redis:
     container_name: redis-service
     restart: unless-stopped
@@ -34,6 +20,38 @@ services:
         - 6379
     depends_on:
       - mongodb
+    networks:
+      - wanderlust
+
+  backend:
+    container_name: backend-service
+    build: ./backend
+    env_file:
+      - ./backend/.env.docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    networks:
+      - wanderlust
+
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    env_file:
+      - ./frontend/.env.docker
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - wanderlust
+
+
+networks:
+  wanderlust:
+    name: wanderlust
+    driver: bridge
 
 volumes:
-  data:
+  mongo_data:
