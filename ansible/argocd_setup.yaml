@@ -1,0 +1,47 @@
+---
+- name: Install ArgoCd
+  hosts: localhost
+  connection: local
+  become: true
+
+  tasks:
+    - name: Create ARGOCD Namespace
+      ansible.builtin.shell:
+        cmd: kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+      environment:
+        KUBECONFIG: /home/ubuntu/.kube/config
+      register: namespace_result
+      changed_when: namespace_result.rc == 0
+      failed_when:
+        - namespace_result.rc != 0
+        - "'AlreadyExists' not in namespace_result.stderr"
+
+    - name: Install ARGOCD
+      ansible.builtin.command:
+        cmd: >
+            kubectl apply 
+            -n argocd 
+            --server-side
+            --force-conflicts
+            -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+      environment:
+        KUBECONFIG: /home/ubuntu/.kube/config
+
+    - name: Wait for ARGOCD Pods
+      ansible.builtin.command:
+        cmd: kubectl wait --for=condition=Ready pods --all -n argocd --timeout=600s 
+      environment:
+        KUBECONFIG: /home/ubuntu/.kube/config
+
+    - name: Verify ARGOCD PODS
+      ansible.builtin.command:       
+        kubectl get pods -n argocd
+      register: argocd_pods
+      changed_when: false
+      environment:
+        KUBECONFIG: /home/ubuntu/.kube/config
+        
+    - name: Display ArgoCD pods
+      ansible.builtin.debug:
+        var: argocd_pods.stdout
+
