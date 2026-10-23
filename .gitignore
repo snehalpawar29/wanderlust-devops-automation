@@ -6,3 +6,4 @@ wanderlust-key.pub
 terraform.tfstate.1790682912.backup
 terraform.tfstate.backup
 .env.docker
+.terraform.*
