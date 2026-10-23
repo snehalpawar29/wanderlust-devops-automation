@@ -22,7 +22,9 @@ spec:
         image: snehalpawar2945/wanderlust-backend:latest
         imagePullPolicy: Always
         ports:
-          - containerPort: 5000
+          - name: http
+            containerPort: 5000
+            protocol: TCP
 
         env:
         - name: PORT
@@ -31,5 +33,33 @@ spec:
           value: "mongodb://mongodb-service:27017/wanderlust"
         - name: REDIS_URL
           value: "redis://redis-service:6379"
+        startupProbe:
+          httpGet:
+            path: /health/live
+            port: http
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: http
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: http
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
 
       

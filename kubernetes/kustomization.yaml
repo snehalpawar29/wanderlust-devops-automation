@@ -3,6 +3,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
+  - namespace.yaml
   - frontend-deployment.yaml
   - backend-deployment.yaml
   - redis-deployment.yaml
@@ -11,5 +12,4 @@ resources:
   - backend-service.yaml
   - redis-service.yaml
   - mongodb-service.yaml
-  - persistentVolume.yaml
   - persistentVolumeClaim.yaml

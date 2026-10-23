@@ -22,4 +22,31 @@ spec:
         image: redis:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 6379
+          - name: redis
+            containerPort: 6379
+            protocol: TCP
+        startupProbe:
+          exec:
+            command: ["redis-cli", "ping"]
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30
+        livenessProbe:
+          exec:
+            command: ["redis-cli", "ping"]
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command: ["redis-cli", "ping"]
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          requests:
+            cpu: "25m"
+            memory: "32Mi"
+          limits:
+            cpu: "200m"
+            memory: "128Mi"

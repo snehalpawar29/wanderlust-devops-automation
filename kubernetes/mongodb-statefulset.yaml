@@ -8,7 +8,7 @@ metadata:
 spec:
   replicas: 1
   selector:
-    matchLabels: 
+    matchLabels:
       app: wanderlust-mongodb
   serviceName: "mongodb-service"
   template:
@@ -23,7 +23,47 @@ spec:
         image: mongo:7
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 27017
+          - name: mongodb
+            containerPort: 27017
+            protocol: TCP
+
+        startupProbe:
+          exec:
+            command:
+              - mongosh
+              - --quiet
+              - --eval
+              - "quit(db.adminCommand('ping').ok ? 0 : 1)"
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+        livenessProbe:
+          exec:
+            command:
+              - mongosh
+              - --quiet
+              - --eval
+              - "quit(db.adminCommand('ping').ok ? 0 : 1)"
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+              - mongosh
+              - --quiet
+              - --eval
+              - "quit(db.adminCommand('ping').ok ? 0 : 1)"
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
         volumeMounts:
           - name: mongodb-data
             mountPath: /data/db
