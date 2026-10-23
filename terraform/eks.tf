@@ -98,7 +98,7 @@ resource "aws_eks_cluster" "wanderlust-cluster" {
   version  = "1.36"
 
   vpc_config {
-    subnet_ids = module.vpc.private_subnets
+    subnet_ids = module.vpc.public_subnets
   }
 
   access_config {
@@ -116,9 +116,9 @@ resource "aws_eks_node_group" "wanderlust-eks-node" {
   cluster_name    = aws_eks_cluster.wanderlust-cluster.name
   node_group_name = "wanderlust"
   node_role_arn   = aws_iam_role.eks_node_role.arn
-  subnet_ids      = module.vpc.private_subnets
+  subnet_ids      = module.vpc.public_subnets
 
-  instance_types = ["c7i-flex.large"]
+  instance_types = ["t3.small"]
 
 
 
@@ -142,6 +142,8 @@ resource "aws_eks_node_group" "wanderlust-eks-node" {
 
   tags = {
     Name        = "node-group"
+    "kubernetes.io/cluster/wanderlust-cluster" = "owned"
+    "k8s.io/cluster-autoscaler/enabled"        = "true"
     Environment = "development"
   }
 }

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb-statefulset
+  namespace: wanderlust-ns
+  labels:
+    app: wanderlust-mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: wanderlust-mongodb
+  serviceName: "mongodb-service"
+  template:
+    metadata:
+      name: mongodb-pod
+      namespace: wanderlust-ns
+      labels:
+        app: wanderlust-mongodb
+    spec:
+      containers:
+      - name: wanderlust-mongodb
+        image: mongo:7
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+          - name: mongodb-data
+            mountPath: /data/db
+      volumes:
+        - name: mongodb-data
+          persistentVolumeClaim:
+            claimName: mongodb-pvc

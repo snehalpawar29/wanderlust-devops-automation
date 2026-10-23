@@ -8,7 +8,7 @@ output "vpc_id" {
   value       = module.vpc.vpc_id
 }
 
-output "public_ip" {
+output "master_public_ip" {
   description = "Public IP of the EC2 instance"
   value       = aws_instance.master.public_ip
 }

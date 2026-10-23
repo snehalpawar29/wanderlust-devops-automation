@@ -5,5 +5,5 @@ variable "ami_id" {
 
 variable "instance_type" {
   description = "AWS INSTANCE TYPE"
-  default     = "c7i-flex.large"
+  default     = "t3.large"
 }

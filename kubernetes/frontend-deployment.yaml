@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: wanderlust
+spec:
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCPv1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  namespace: wanderlust-ns
+  labels:
+    app: wanderlust-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wanderlust-frontend
+  template:
+    metadata:
+      name: frontend-pod
+      namespace: wanderlust-ns
+      labels:
+        app: wanderlust-frontend
+    spec:
+      containers:
+      - name: wanderlust-frontend
+        image: snehalpawar2945/wanderlust-frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5173
+
+      

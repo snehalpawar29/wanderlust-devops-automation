@@ -25,7 +25,10 @@ services:
 
   backend:
     container_name: backend-service
-    build: ./backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    image: snehalpawar2945/wanderlust-backend
     env_file:
       - ./backend/.env.docker
     ports:
@@ -37,7 +40,10 @@ services:
 
   frontend:
     container_name: frontend
-    build: ./frontend
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: snehalpawar2945/wanderlust-frontend
     env_file:
       - ./frontend/.env.docker
     ports:
