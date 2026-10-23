@@ -3,12 +3,15 @@ kind: Service
 metadata:
   name: frontend-service
   namespace: wanderlust-ns
+  labels:
+    app: wanderlust-frontend
 spec:
   selector:
     app: wanderlust-frontend
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 5173
-  type: LoadBalancer
+      targetPort: 80
+      nodePort: 30080
+  type: NodePort
   

@@ -3,11 +3,14 @@ kind: Service
 metadata:
   name: backend-service
   namespace: wanderlust-ns
+  labels:
+    app: wanderlust-backend
 spec:
   selector:
     app: wanderlust-backend
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 8080
       targetPort: 5000
-  type: LoadBalancer
+  type: ClusterIP

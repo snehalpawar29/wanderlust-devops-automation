@@ -22,6 +22,6 @@ spec:
         image: snehalpawar2945/wanderlust-frontend:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 5173
+        - containerPort: 80
 
       

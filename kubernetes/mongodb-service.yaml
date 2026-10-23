@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: mongodb-service
   namespace: wanderlust-ns
+  labels:
+    app: wanderlust-mongodb
 spec:
   selector:
     app: wanderlust-mongodb
@@ -10,5 +12,5 @@ spec:
     - protocol: TCP
       port: 27017
       targetPort: 27017
-  type: LoadBalancer
+  type: ClusterIP
     

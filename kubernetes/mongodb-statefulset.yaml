@@ -21,7 +21,7 @@ spec:
       containers:
       - name: wanderlust-mongodb
         image: mongo:7
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 27017
         volumeMounts:

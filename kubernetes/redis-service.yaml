@@ -4,6 +4,7 @@ metadata:
   name: redis-service
   namespace: wanderlust-ns
 spec:
+  type: ClusterIP
   selector:
     app: redis
   ports:
