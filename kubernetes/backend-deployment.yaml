@@ -17,6 +17,10 @@ spec:
       labels:
         app: wanderlust-backend
     spec:
+      initContainers:
+      - name: wait-for-redis
+        image: busybox:latest
+        command: ['sh', '-c', 'until nc -zvw1 redis-service 6379; do echo "Waiting for Redis..."; sleep 2; done;']
       containers:
       - name: wanderlust-backend
         image: snehalpawar2945/wanderlust-backend:latest
