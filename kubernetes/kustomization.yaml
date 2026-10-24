@@ -12,4 +12,6 @@ resources:
   - backend-service.yaml
   - redis-service.yaml
   - mongodb-service.yaml
+  - persistentVolume.yaml
+  - secrets.yaml
   - persistentVolumeClaim.yaml

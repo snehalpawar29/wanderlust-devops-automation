@@ -34,9 +34,10 @@ spec:
               - --quiet
               - --eval
               - "quit(db.adminCommand('ping').ok ? 0 : 1)"
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 30
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30
         livenessProbe:
           exec:
             command:
@@ -44,9 +45,9 @@ spec:
               - --quiet
               - --eval
               - "quit(db.adminCommand('ping').ok ? 0 : 1)"
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
         readinessProbe:
           exec:
             command:
@@ -54,9 +55,10 @@ spec:
               - --quiet
               - --eval
               - "quit(db.adminCommand('ping').ok ? 0 : 1)"
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
         resources:
           requests:
             cpu: "100m"

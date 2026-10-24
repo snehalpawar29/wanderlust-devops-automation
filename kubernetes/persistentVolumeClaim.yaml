@@ -6,7 +6,9 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: ""
+  volumeName: mongodb-pv
   resources:
     requests:
       storage: 1Gi
-  volumeMode: Filesystem
