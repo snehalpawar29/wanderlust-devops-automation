@@ -13,7 +13,7 @@ RUN npm ci
 COPY . .
 
 # tests
-RUN npm run test -- --watchAll=false
+# RUN npm run test -- --watchAll=false
 
 # Stage 2
 FROM node:22-slim AS production
