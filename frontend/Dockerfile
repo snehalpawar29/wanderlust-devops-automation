@@ -6,7 +6,8 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
-RUN cp .env.docker .env.production && npm run build
+# RUN cp .env.docker .env.production && npm run build
+RUN npm run build
 
 # Serve only the built assets; Node and npm are not needed at runtime.
 FROM nginx:alpine
