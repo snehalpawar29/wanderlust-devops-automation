@@ -20,4 +20,4 @@ spec:
             - key: kubernetes.io/hostname
               operator: In
               values:
-                - wanderlust-cluster-worker
+                - ip-10-0-1-156.ap-south-1.compute.internal
