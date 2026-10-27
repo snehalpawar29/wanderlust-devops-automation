@@ -141,9 +141,32 @@ resource "aws_eks_node_group" "wanderlust-eks-node" {
   ]
 
   tags = {
-    Name        = "node-group"
+    Name                                       = "node-group"
     "kubernetes.io/cluster/wanderlust-cluster" = "owned"
     "k8s.io/cluster-autoscaler/enabled"        = "true"
-    Environment = "development"
+    Environment                                = "development"
+  }
+}
+
+
+
+data "aws_instances" "eks_worker_nodes" {
+  depends_on = [
+    aws_eks_node_group.wanderlust-eks-node
+  ]
+
+  filter {
+    name   = "tag:eks:cluster-name"
+    values = [aws_eks_cluster.wanderlust-cluster.name]
+  }
+
+  filter {
+    name   = "tag:eks:nodegroup-name"
+    values = [aws_eks_node_group.wanderlust-eks-node.node_group_name]
+  }
+
+  filter {
+    name   = "instance-state-name"
+    values = ["running"]
   }
 }

@@ -8,4 +8,3 @@ terraform.tfstate.backup
 .env.docker
 .terraform.*
 # Local Kubernetes secrets - never commit real credentials
-kubernetes/secrets.yaml

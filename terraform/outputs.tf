@@ -36,3 +36,15 @@ output "jenkins_worker_public_ip" {
   description = "Public IP of the EC2 instance"
   value       = aws_instance.jenkins-worker.public_ip
 }
+
+
+
+output "eks_worker_node_private_ips" {
+  description = "Private IP addresses of EKS worker nodes"
+  value       = data.aws_instances.eks_worker_nodes.private_ips
+}
+
+output "eks_worker_node_public_ips" {
+  description = "Public IP addresses of EKS worker nodes"
+  value       = data.aws_instances.eks_worker_nodes.public_ips
+}
