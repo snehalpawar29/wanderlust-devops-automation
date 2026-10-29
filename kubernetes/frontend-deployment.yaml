@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: wanderlust-frontend
-        image: snehalpawar2945/wanderlust-frontend:11
+        image: snehalpawar2945/wanderlust-frontend:3
         imagePullPolicy: Always
         ports:
           - name: http

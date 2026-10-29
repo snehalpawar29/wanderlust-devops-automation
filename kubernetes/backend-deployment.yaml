@@ -23,7 +23,7 @@ spec:
         command: ['sh', '-c', 'until nc -zvw1 redis-service 6379; do echo "Waiting for Redis..."; sleep 2; done;']
       containers:
       - name: wanderlust-backend
-        image: snehalpawar2945/wanderlust-backend:11
+        image: snehalpawar2945/wanderlust-backend:3
         imagePullPolicy: Always
         ports:
           - name: http
