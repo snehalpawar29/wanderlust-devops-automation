@@ -1,6 +1,0 @@
-projectKey=wanderlust-devops-automation
-serverUrl=http://13.232.69.165:9000
-serverVersion=26.10.0.133078
-dashboardUrl=http://13.232.69.165:9000/dashboard?id=wanderlust-devops-automation
-ceTaskId=eed9481e-575c-42d4-afbb-9417c35e7b21
-ceTaskUrl=http://13.232.69.165:9000/api/ce/task?id=eed9481e-575c-42d4-afbb-9417c35e7b21
