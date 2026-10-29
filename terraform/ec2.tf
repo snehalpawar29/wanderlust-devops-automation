@@ -83,13 +83,6 @@ resource "aws_vpc_security_group_ingress_rule" "rule_6379" {
   ip_protocol       = "tcp"
 }
 
-resource "aws_vpc_security_group_ingress_rule" "rule_3000-10000" {
-  security_group_id = aws_security_group.wanderlust-sg.id
-  from_port         = 3000
-  to_port           = 10000
-  cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "tcp"
-}
 
 resource "aws_vpc_security_group_ingress_rule" "rule_30000-32767" {
   security_group_id = aws_security_group.wanderlust-sg.id

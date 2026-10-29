@@ -1,6 +1,6 @@
 resource "aws_instance" "jenkins-worker" {
   ami                    = var.ami_id
-  instance_type          = var.instance_type
+  instance_type          = "t3.medium"
   iam_instance_profile   = aws_iam_instance_profile.jenkins_worker_profile.name
   region                 = local.region
   subnet_id              = module.vpc.public_subnets[0]
