@@ -51,9 +51,6 @@ The implementation uses **Terraform** to provision AWS infrastructure, **Ansible
 
 </div>
 
-**Timing benchmarks are not presented as proven improvements.** One manual application deployment attempt took 16 min 22 sec but did not complete successfully: the deployment reached `ImagePullBackOff` because the referenced manual image tag was not available in the registry. A separate automated run was recorded at 4 min 49 sec. These are not comparable successful end-to-end releases, so a deployment-time improvement percentage would be misleading. Re-run both methods from the same start point to a successful, healthy rollout before publishing a percentage.
-
-A 33-minute manual infrastructure setup and an 11-minute Terraform/Ansible run were also recorded, but the comparison scope needs alignment: the current Terraform configuration provisions a VPC, while the manual baseline was planned to skip VPC creation. Repeat both with identical scope before using a percentage.
 
 ## 🏗️ Architecture
 
@@ -166,7 +163,6 @@ The `terraform/` directory defines the AWS foundation in `ap-south-1`:
 - Terraform outputs for VPC ID, cluster endpoint, node group name and instance/node addresses.
 - Provisioners invoke Ansible playbooks for host configuration, kubeconfig setup and Argo CD installation.
 
-> The current Terraform code **does create the VPC**. If you benchmark infrastructure setup without VPC creation, make the manual and automated scopes identical before comparing the timings.
 
 ## 🛠️ Configuration management — Ansible
 
@@ -270,17 +266,12 @@ docker compose down
 
 The named MongoDB volume is retained by `docker compose down`; use `docker compose down -v` only when you deliberately want to delete local database data.
 
-## 📊 Benchmark methodology and notes
-
-- **Docker image sizes:** The before/after values above are the image-size measurements recorded for the original and optimized builds. Compare images built for the same application version and architecture when repeating the test.
-- **Application release time:** A manual attempt elapsed 16:22 but ended in `ImagePullBackOff`; an automated run was recorded at 04:49. Because the manual attempt did not complete successfully, this is not a valid like-for-like release benchmark and no deployment-speed percentage is claimed. Repeat several successful runs under comparable conditions before making a deployment-speed claim.
-- **Infrastructure provisioning time:** A 33-minute manual setup and an 11-minute Terraform/Ansible setup were recorded. The percentage is omitted because the current Terraform configuration includes VPC provisioning while the manual baseline was planned to exclude it. Re-run with matching scope to establish a fair comparison.
 
 ## 📁 Repository layout
 
 ```text
 .
-├── Assets/                 # Project visuals and benchmark charts
+├── Assets/                 # Project diagrams and charts
 ├── Automations/            # Environment update scripts
 ├── ansible/                # Master, worker, kubeconfig and Argo CD playbooks
 ├── backend/                # Node.js API
