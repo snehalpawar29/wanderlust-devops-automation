@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="610" viewBox="0 0 1200 610" role="img" aria-labelledby="title desc">
+  <title id="title">Docker image size before and after optimization</title>
+  <desc id="desc">Frontend image reduced from 718 MB to 94.9 MB, an 86.8 percent reduction. Backend image reduced from 427 MB to 368 MB, a 13.8 percent reduction.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1220"/><stop offset="1" stop-color="#172554"/></linearGradient>
+    <linearGradient id="old" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f59e0b"/><stop offset="1" stop-color="#fb923c"/></linearGradient>
+    <linearGradient id="new" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#10b981"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient>
+  </defs>
+  <rect width="1200" height="610" rx="28" fill="url(#bg)"/>
+  <circle cx="1080" cy="68" r="155" fill="#2563eb" opacity=".10"/><circle cx="80" cy="560" r="180" fill="#14b8a6" opacity=".08"/>
+  <text x="64" y="76" fill="#f8fafc" font-family="Arial,Helvetica,sans-serif" font-size="34" font-weight="700">Docker image size optimization</text>
+  <text x="64" y="113" fill="#a5b4fc" font-family="Arial,Helvetica,sans-serif" font-size="18">Measured before vs. optimized image sizes · lower is better</text>
+  <rect x="64" y="144" width="1072" height="1" fill="#334155"/>
+  <rect x="64" y="170" width="510" height="365" rx="20" fill="#111c32" stroke="#334155"/><rect x="594" y="170" width="542" height="365" rx="20" fill="#111c32" stroke="#334155"/>
+  <text x="96" y="215" fill="#e2e8f0" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="700">Frontend</text><text x="96" y="247" fill="#94a3b8" font-family="Arial,Helvetica,sans-serif" font-size="15">718 MB → 94.9 MB</text>
+  <text x="96" y="292" fill="#cbd5e1" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="700">ORIGINAL</text><rect x="96" y="309" width="425" height="34" rx="9" fill="#24344f"/><rect x="96" y="309" width="380" height="34" rx="9" fill="url(#old)"/><text x="486" y="332" fill="#fff7ed" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700">718 MB</text>
+  <text x="96" y="379" fill="#cbd5e1" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="700">OPTIMIZED</text><rect x="96" y="396" width="425" height="34" rx="9" fill="#24344f"/><rect x="96" y="396" width="50" height="34" rx="9" fill="url(#new)"/><text x="157" y="419" fill="#ccfbf1" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700">94.9 MB</text>
+  <rect x="96" y="465" width="195" height="42" rx="21" fill="#064e3b"/><text x="193" y="492" text-anchor="middle" fill="#a7f3d0" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700">↓ 86.8% smaller</text>
+  <text x="626" y="215" fill="#e2e8f0" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="700">Backend</text><text x="626" y="247" fill="#94a3b8" font-family="Arial,Helvetica,sans-serif" font-size="15">427 MB → 368 MB</text>
+  <text x="626" y="292" fill="#cbd5e1" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="700">ORIGINAL</text><rect x="626" y="309" width="455" height="34" rx="9" fill="#24344f"/><rect x="626" y="309" width="270" height="34" rx="9" fill="url(#old)"/><text x="906" y="332" fill="#fff7ed" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700">427 MB</text>
+  <text x="626" y="379" fill="#cbd5e1" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="700">OPTIMIZED</text><rect x="626" y="396" width="455" height="34" rx="9" fill="#24344f"/><rect x="626" y="396" width="233" height="34" rx="9" fill="url(#new)"/><text x="869" y="419" fill="#ccfbf1" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700">368 MB</text>
+  <rect x="626" y="465" width="195" height="42" rx="21" fill="#064e3b"/><text x="723" y="492" text-anchor="middle" fill="#a7f3d0" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700">↓ 13.8% smaller</text>
+  <rect x="64" y="558" width="16" height="16" rx="4" fill="url(#old)"/><text x="90" y="572" fill="#cbd5e1" font-family="Arial,Helvetica,sans-serif" font-size="14">Original image</text><rect x="235" y="558" width="16" height="16" rx="4" fill="url(#new)"/><text x="261" y="572" fill="#cbd5e1" font-family="Arial,Helvetica,sans-serif" font-size="14">Optimized image</text><text x="1136" y="572" text-anchor="end" fill="#64748b" font-family="Arial,Helvetica,sans-serif" font-size="13">Wanderlust · Docker optimization</text>
+</svg>
