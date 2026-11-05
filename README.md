@@ -1,181 +1,232 @@
+🌍 Wanderlust – DevOps Automation & GitOps Deployment
 
-🌍 Wanderlust — DevSecOps & GitOps Automation
-Rebuilding the delivery platform with Infrastructure as Code, CI/CD, security checks and GitOps
-� � � � �
-� � � � �
-My DevOps implementation: snehalpawar29/wanderlust-devops-automation
-Original project: LondheShubham153/Wanderlust-Mega-Project
+A complete DevOps implementation for deploying the Wanderlust MERN application on AWS EKS using Terraform, Ansible, Jenkins, Docker, Kubernetes, and Argo CD.
 
-🏗️ Architecture
-flowchart TB
-    DEV[Developer pushes code] --> GH[(GitHub repository)]
+🏗️ Architecture Diagram
 
-    subgraph AWS[ AWS environment — ap-south-1 ]
-      subgraph PROVISION[Infrastructure provisioning]
-        TF[Terraform]
-        VPC[VPC · Subnets · NAT · Security Groups]
-        IAM[IAM roles · Policies · Instance Profiles]
-        EC2[Jenkins Controller EC2 + Worker EC2]
-        EKS[Amazon EKS Cluster + Managed Node Group]
-        TF --> VPC
-        TF --> IAM
-        TF --> EC2
-        TF --> EKS
-      end
+"Wanderlust DevOps Architecture" (assets/Architecture_Diagram)
 
-      subgraph CONFIG[Configuration management — Ansible]
-        AM[Master setup: Docker · Jenkins · AWS CLI · kubectl · eksctl · SonarQube]
-        AW[Worker setup: Docker · AWS CLI · Trivy]
-        AK[Update EKS kubeconfig]
-        AR[Install Argo CD]
-        AM --> AK
-        AW --> AK
-        AK --> AR
-      end
+📌 Project Overview
 
-      subgraph CLUSTER[Amazon EKS]
-        subgraph ARGO[Argo CD namespace]
-          ACD[Argo CD watches GitHub manifests]
-        end
-        subgraph APP[Application namespace: wanderlust-ns]
-          FE[Frontend Deployment · 2 replicas\nNginx + React · NodePort Service]
-          BE[Backend Deployment · 2 replicas\nNode.js + Express · ClusterIP Service]
-          REDIS[Redis Deployment · Service]
-          MONGO[MongoDB StatefulSet · PV/PVC]
-          FE --> BE
-          BE --> REDIS
-          BE --> MONGO
-        end
-        ACD -->|Sync desired state| APP
-      end
-    end
+The original Wanderlust Mega Project application was created by "Shubham Londhe" (https://github.com/LondheShubham153). I used the original project as a reference and rebuilt its deployment and DevOps workflow in my own repository. My goal was to go beyond following a deployment walkthrough and build a more automated, repeatable, and GitOps-based delivery process. I focused on automating AWS infrastructure provisioning and server configuration, improving Docker image efficiency, integrating security and code-quality checks into Jenkins, and using Argo CD to manage application deployment on Amazon EKS.
 
-    GH -->|Push event / source checkout| JM[Jenkins Controller]
-    JM -->|Agent label: Node| JW[Jenkins Worker]
-    subgraph PIPELINE[Jenkins CI pipeline]
-      JW --> TR[Trivy filesystem scan]
-      TR --> OW[OWASP Dependency-Check]
-      OW --> SQ[SonarQube analysis + quality gate]
-      SQ --> BUILD[Build frontend + backend images in parallel]
-      BUILD --> PUSH[Push versioned images to Docker Hub in parallel]
-      PUSH --> TAG[Update Kubernetes image tags]
-    end
-    TAG -->|Commit updated manifests| GH
-    GH -->|GitOps source| ACD
+Original application: "Wanderlust Mega Project" (https://github.com/LondheShubham153/Wanderlust-Mega-Project)
+My implementation: "wanderlust-devops-automation" (https://github.com/snehalpawar29/wanderlust-devops-automation)
 
-    EC2 -.-> AM
-    EC2 -.-> AW
-    EKS -. hosts .-> APP
+---
 
-    classDef source fill:#dbeafe,stroke:#2563eb,color:#1e3a8a,stroke-width:1.5px
-    classDef iac fill:#ede9fe,stroke:#7c3aed,color:#312e81,stroke-width:1.5px
-    classDef config fill:#fee2e2,stroke:#dc2626,color:#7f1d1d,stroke-width:1.5px
-    classDef pipeline fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e,stroke-width:1.5px
-    classDef gitops fill:#ffedd5,stroke:#ea580c,color:#7c2d12,stroke-width:1.5px
-    classDef runtime fill:#dcfce7,stroke:#16a34a,color:#14532d,stroke-width:1.5px
-    class DEV,GH source
-    class TF,VPC,IAM,EC2,EKS iac
-    class AM,AW,AK,AR config
-    class JM,JW,TR,OW,SQ,BUILD,PUSH,TAG pipeline
-    class ACD gitops
-    class FE,BE,REDIS,MONGO runtime
-🎯 Project ownership, rebuild motivation and my contribution
-The original Wanderlust MERN travel-blog application and its deployment walkthrough are credited to LondheShubham153. I used that project as the application and learning reference, then rebuilt the DevOps and deployment side in my own repository. My goal was to move away from manually creating AWS resources and installing/configuring tools step by step, and create a more repeatable workflow: provision infrastructure with Terraform, configure EC2 and Kubernetes tooling with Ansible, run security and code-quality checks in Jenkins, package optimized Docker images, and deploy Kubernetes changes through GitHub and Argo CD. The original application is credited to its owner; this repository focuses on my infrastructure, automation, containerization, CI/CD and GitOps implementation.
-1. ☁️ Terraform + Ansible — Infrastructure and configuration automation
-Manual reference workflow vs. my automation
-The original guide walks through manual AWS resource creation and installation/configuration steps for the Jenkins master, EKS cluster, node group and worker. I replaced much of that repeatable setup with Terraform resources and Ansible playbooks.
-�
-Original chart: PNG
-66.7% calculated reduction 33 minutes manual → 11 minutes Terraform + Ansible
-What I changed:
-Terraform: Declared the VPC, subnets across two Availability Zones, NAT gateway, security group, EC2 instances, IAM roles/instance profiles, EKS cluster, managed node group, OIDC provider and EKS access configuration as code.
-Ansible: Automated master setup (Docker, Jenkins, AWS CLI, Kind, kubectl, eksctl and SonarQube), worker setup (Docker, AWS CLI and Trivy), EKS kubeconfig configuration and Argo CD installation.
-Repeatability: Kept infrastructure definitions and configuration playbooks in the repository instead of relying only on a long sequence of console actions and shell commands.
-Timing context: 66.7% is the arithmetic reduction from the recorded 33-minute manual setup and 11-minute automated setup. The manual timing excluded VPC setup, while the current Terraform configuration also creates the VPC. Treat this as an indicative recorded comparison, not a controlled like-for-like benchmark.
-2. 🐳 Dockerfiles — Image-size optimization
-I redesigned the frontend and backend Dockerfiles to keep build-time dependencies and tools out of the final runtime images.
-�
-Comparison chart: PNG
-Image
-Original
-My image
-Reduction
+1. ☁️ Infrastructure Automation – Terraform & Ansible
+
+I automated AWS infrastructure provisioning and server configuration using Terraform and Ansible, replacing the original workflow's manual infrastructure and tool-setup steps with reusable automation.
+
+What I improved
+
+- Used Terraform to provision the VPC, subnets across two Availability Zones, NAT Gateway, security groups, EC2 instances, IAM roles, and Amazon EKS resources.
+- Used Ansible to configure the Jenkins master and worker, installing and configuring the required DevOps tools.
+- Automated the installation of Docker, Jenkins, AWS CLI, kubectl, eksctl, Kind, SonarQube, and Trivy through Ansible playbooks.
+- Automated EKS kubeconfig configuration and Argo CD installation.
+- Separated infrastructure provisioning from server configuration to keep the workflow modular and maintainable.
+
+Recorded setup-time comparison
+
+Workflow| Recorded time
+Original manual setup workflow| 33 minutes
+Terraform + Ansible automation| 11 minutes
+
+66.7% lower recorded setup time.
+
+"Infrastructure Setup Time Comparison" (Assets/infrastructure-setup-comparison.png)
+
+The percentage represents the calculated difference between the two recorded setup times.
+
+---
+
+2. 🐳 Docker Image Optimization
+
+I reviewed and improved the frontend and backend Dockerfiles using multi-stage builds and more focused runtime images.
+
+What I improved
+
 Frontend
-718 MB
-94.9 MB
-86.8%
-Backend
-427 MB
-368 MB
-13.8%
-What I changed:
-Frontend: Replaced the Node-based development runtime with a multi-stage build using node:22-alpine, npm ci and npm run build; the final stage uses nginx:alpine and serves only the compiled dist/ assets.
-Backend: Used node:22-slim multi-stage builds, npm ci, npm ci --omit=dev in the production stage, and copied only the required runtime directories instead of carrying the full build workspace.
-Result: The frontend image is 86.8% smaller and the backend image is 13.8% smaller based on the before/after image sizes recorded for this project.
-Build-test note: The npm run test command in the current backend Dockerfile is commented out. I am not claiming that the current Docker build runs the backend test suite; a dedicated Jenkins test stage is a useful next improvement.
-3. 🔧 Jenkins — Consolidated CI and image-release pipeline
-The original reference uses separate Jenkins CI and CD jobs. I brought the main validation, image build/push and Kubernetes manifest-update steps into one Jenkins pipeline using a Jenkins Shared Library and a worker agent labelled Node.
-What I changed:
-Clean workspace and check out the main branch.
-Run Trivy filesystem scanning and OWASP Dependency-Check.
-Run SonarQube analysis and wait for the configured quality gate.
-Build frontend and backend Docker images in parallel using the Jenkins build number as the image tag.
-Push both images to Docker Hub in parallel.
-Update the Kubernetes deployment image tags and commit the manifest changes back to GitHub.
-Clean the workspace and send success/failure email notifications.
-Why it is better: The stages are maintained in a single version-controlled Jenkinsfile; reusable Shared Library functions reduce repeated pipeline code; parallel build and push stages avoid running the frontend and backend image work sequentially; and the manifest commit provides the Git change that Argo CD can reconcile.
-4. 🚀 Argo CD, Prometheus and Grafana — GitOps and observability
-Argo CD — implemented in this repository
-The original guide describes installing and configuring Argo CD through manual commands. I added an Ansible playbook that creates the argocd namespace, applies the Argo CD installation manifest, waits for Argo CD pods to become Ready and verifies the resulting pods.
-In the delivery flow, Jenkins commits updated Kubernetes image tags to GitHub. Argo CD uses the Git repository as the desired-state source and synchronizes the manifests to Amazon EKS. This separates image creation and manifest updates (Jenkins) from Kubernetes reconciliation (Argo CD).
-Prometheus + Grafana — status of this repository
-The original project guide includes a Prometheus/Grafana installation using Helm. In the current version of my repository, I could not verify checked-in Helm values, Ansible tasks or Kubernetes manifests that automate that monitoring stack. I have therefore not described Prometheus/Grafana as an improvement delivered by this repository. They can be added as a follow-up observability layer with version-controlled Helm values and deployment configuration.
-5. ⏱️ Deployment elapsed-time comparison
-The recorded manual workflow took 16 minutes 22 seconds, while the Jenkins + Argo CD workflow was recorded at 4 minutes 49 seconds.
-�
-70.6% lower recorded elapsed time — 16:22 manual workflow → 04:49 Jenkins + Argo CD workflow.
-What I improved: Jenkins automates validation, parallel frontend/backend image builds and pushes, and Kubernetes manifest updates in GitHub. Argo CD watches the Git repository and synchronizes the desired manifests to Amazon EKS. This connects CI and GitOps into a streamlined application delivery workflow.
-The percentage represents the calculated difference between the two recorded elapsed times (982 seconds and 289 seconds).
-📌 Technology stack
-Area
-Tools
-Cloud
-AWS VPC, EC2, IAM, EKS
-Infrastructure as Code
-Terraform
-Configuration Management
-Ansible
-CI/CD
-Jenkins, Jenkins Shared Library, Groovy
-Security and Quality
-Trivy, OWASP Dependency-Check, SonarQube Quality Gate
-Containers
-Docker, Docker Hub, Nginx
-Orchestration and GitOps
-Kubernetes, Argo CD
-Application/Data
-React, Node.js, MongoDB, Redis
-Source Control
-Git, GitHub
-📁 Repository structure
-.
-├── Assets/                 # Comparison charts used in this README
-├── Automations/            # Environment update scripts
-├── ansible/                # Master, worker, kubeconfig and Argo CD playbooks
-├── backend/                # Node.js backend application
-├── frontend/               # React/Vite frontend application
-├── kubernetes/             # Deployments, Services, StatefulSet and storage manifests
-├── terraform/              # AWS VPC, EC2, IAM and EKS resources
-├── docker-compose.yml      # Local multi-container setup
-├── Jenkinsfile             # Jenkins CI pipeline
-└── README.md
-🔒 Security note
-Before using this repository as a public portfolio example, rotate the JWT signing secret that was previously committed in kubernetes/secrets.yaml, remove the real value from tracked files and Git history, and replace it with a safe template or external secret-management approach. Also review the broad security-group ingress rules and the EC2 roles currently attached to AdministratorAccess before treating this as a production deployment.
-🙌 Credits
-Original application and deployment reference: LondheShubham153/Wanderlust-Mega-Project
-DevOps automation, infrastructure code, Docker improvements and CI/GitOps implementation in this repository: Snehal Pawar
-👩‍💻 Author
-Snehal Pawar · Cloud & DevOps Engineer
-GitHub · LinkedIn
 
-Automate infrastructure. Secure the pipeline. Deploy through GitOps.
+- Used a multi-stage Docker build with Node.js 22 Alpine.
+- Installed dependencies using "npm ci".
+- Built the frontend application and copied only the generated "dist/" directory into the final Nginx Alpine image.
+- Kept build-time dependencies out of the final runtime image.
+
+Backend
+
+- Used a multi-stage Docker build with Node.js 22 Slim.
+- Installed dependencies using "npm ci".
+- Used "npm ci --omit=dev" in the production stage.
+- Copied only the required application files into the final image.
+
+Docker image-size comparison
+
+Application| Original image| Optimized image| Reduction
+Frontend| 718 MB| 94.9 MB| 86.8%
+Backend| 427 MB| 368 MB| 13.8%
+
+"Docker Image Size Comparison" (Assets/docker-image-size-comparison.png)
+
+Result: Smaller Docker images with reduced runtime image contents and more efficient image distribution.
+
+---
+
+3. 🔄 CI Pipeline – Jenkins
+
+I implemented a Jenkins pipeline integrated with a reusable Jenkins Shared Library to automate application validation, image creation, and publishing.
+
+What I improved
+
+- Integrated a Jenkins Shared Library to reuse pipeline functions.
+- Added GitHub source-code checkout.
+- Integrated Trivy filesystem scanning.
+- Integrated OWASP Dependency-Check for dependency vulnerability analysis.
+- Integrated SonarQube code analysis and quality-gate validation.
+- Built frontend and backend Docker images in parallel.
+- Pushed the generated images to Docker Hub.
+- Automated Kubernetes manifest image-tag updates and pushed the updated manifests to GitHub.
+- Added email notifications and workspace cleanup.
+
+This creates a structured CI workflow that combines security checks, code-quality analysis, and parallel image-building stages.
+
+---
+
+4. 🚀 GitOps Deployment – Argo CD & Kubernetes
+
+I integrated Argo CD with Amazon EKS to implement GitOps-based application deployment.
+
+What I improved
+
+- Installed and configured Argo CD on the EKS cluster.
+- Connected Argo CD to the GitHub repository containing Kubernetes manifests.
+- Configured Git as the desired-state source for application deployment.
+- Used Argo CD to synchronize Kubernetes manifests with the EKS cluster.
+- Organized application resources in the "wanderlust-ns" namespace.
+
+Kubernetes resources
+
+Component| Configuration
+Frontend| Deployment with 2 replicas and NodePort Service
+Backend| Deployment with 2 replicas and ClusterIP Service
+Redis| Deployment and Service
+MongoDB| StatefulSet with persistent storage
+Storage| Persistent Volume and Persistent Volume Claim
+
+Argo CD continuously monitors the configured Git repository and helps keep the Kubernetes environment aligned with the declared manifests.
+
+Monitoring – Prometheus & Grafana
+
+Prometheus and Grafana are part of the monitoring stack in the original project reference. They are not currently provisioned by the automation in this repository, so I have not included them as completed implementation features.
+
+They are planned as a future extension to provide cluster and application metrics, dashboards, and monitoring visibility.
+
+---
+
+5. ⏱️ Deployment Elapsed-Time Comparison
+
+The recorded manual workflow took 16 minutes 22 seconds, while the Jenkins + Argo CD workflow was recorded at 4 minutes 49 seconds.
+
+"Deployment Elapsed-Time Comparison" (Assets/deployment-time-comparison.png)
+
+70.6% lower recorded elapsed time — 16:22 manual workflow → 04:49 Jenkins + Argo CD workflow.
+
+What I improved
+
+- Jenkins automates validation, parallel frontend/backend image builds and pushes, and Kubernetes manifest updates in GitHub.
+- Argo CD monitors the Git repository and synchronizes the desired manifests to Amazon EKS.
+- Connected CI and GitOps into a streamlined application delivery workflow.
+
+The percentage represents the calculated difference between the two recorded elapsed times (982 seconds and 289 seconds).
+
+---
+
+🧰 Technology Stack
+
+Category| Tools & Technologies
+Cloud| AWS – VPC, EC2, IAM, EKS, ECR, S3
+Infrastructure as Code| Terraform
+Configuration Management| Ansible
+CI/CD| Jenkins, Jenkins Shared Library
+Containerization| Docker
+Container Orchestration| Kubernetes, Amazon EKS
+GitOps| Argo CD
+Security Scanning| Trivy, OWASP Dependency-Check
+Code Quality| SonarQube
+Application Stack| React, Node.js, Express, MongoDB, Redis
+Web Server| Nginx
+Version Control| Git, GitHub
+Container Registry| Docker Hub
+
+---
+
+📂 Repository Structure
+
+wanderlust-devops-automation/
+│
+├── terraform/
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── ...
+│
+├── ansible/
+│   ├── master_setup.yml
+│   ├── jenkins_worker_setup.yml
+│   └── ...
+│
+├── Jenkinsfile
+│
+├── kubernetes/
+│   ├── frontend/
+│   ├── backend/
+│   ├── redis/
+│   └── mongodb/
+│
+├── Dockerfile
+│
+├── assets/
+│   └── Architecture_Diagram
+│
+└── README.md
+
+The structure above highlights the main project areas; individual files and folders may vary in the repository.
+
+---
+
+🔐 Security Notes
+
+- Use IAM roles with least-privilege permissions for AWS resources.
+- Store application credentials and sensitive values outside version control.
+- Use Kubernetes Secrets or an external secrets-management solution for sensitive application configuration.
+- Review security-group ingress rules and IAM policies before deploying in a production environment.
+
+---
+
+🎯 Key Outcomes
+
+- Automated AWS infrastructure provisioning using Terraform.
+- Automated server and DevOps tool configuration using Ansible.
+- Reduced recorded infrastructure setup time by 66.7%.
+- Reduced frontend Docker image size by 86.8% and backend image size by 13.8%.
+- Integrated security scanning and code-quality checks into Jenkins.
+- Automated parallel Docker image builds and publishing.
+- Implemented GitOps-based deployment using Argo CD and Amazon EKS.
+- Recorded a 70.6% lower elapsed time for the Jenkins + Argo CD workflow compared with the recorded manual workflow.
+
+---
+
+🙏 Credits
+
+- Original application and reference project: "Shubham Londhe – Wanderlust Mega Project" (https://github.com/LondheShubham153/Wanderlust-Mega-Project)
+- DevOps automation and deployment implementation: "Snehal Pawar" (https://github.com/snehalpawar29)
+
+👨‍💻 Author
+
+Snehal Pawar
+Cloud & DevOps Engineer | AWS | Kubernetes | CI/CD | Automation
+
+- GitHub: "github.com/snehalpawar29" (https://github.com/snehalpawar29)
+- LinkedIn: "linkedin.com/in/snehalpawar29" (https://linkedin.com/in/snehalpawar29)
+- Portfolio: "Snehal Pawar – DevOps Portfolio" (https://snehalpawar29.github.io/Snehal-Pawar-Devops-Portfolio/)
