@@ -8,7 +8,7 @@
 
 🏗️ Architecture Diagram
 
-"Wanderlust DevOps Architecture" (assets/Architecture_Diagram)
+"Wanderlust DevOps Architecture" (assets/Architecture_Diagram.png)
 
 ---
 
